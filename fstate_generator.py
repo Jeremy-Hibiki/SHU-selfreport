@@ -99,7 +99,7 @@ def get_last_report(sess, t):
                 print(ShiFZX)
             if 'XiaoQu' in h:
                 print('-XiaoQu-')
-                XiaoQu = "" if "不在上海" in ShiFSH else _html_to_json(htmls[i - 1])['Text']
+                XiaoQu = "" if "不在上海" in ShiFSH or ShiFZX == "否" else _html_to_json(htmls[i - 1])['Text']
                 print(XiaoQu)
             if 'ddlSheng' in h:
                 print('-ddlSheng-')
@@ -160,7 +160,9 @@ def upload_img(sess, view_state, ShouJHM, t):
     with open(img_path, 'rb') as f:
         r = sess.post('https://selfreport.shu.edu.cn/DayReport.aspx', data={
             '__EVENTTARGET': target,
-            '__VIEWSTATE': view_state
+            '__EVENTARGUMENT': '',
+            '__VIEWSTATE': view_state,
+            'p1$BaoSRQ': t.strftime('%Y-%m-%d')
         }, files={
             target: f
         }, headers={
@@ -190,7 +192,7 @@ def get_img_value(sess, ShouJHM, t):
     ret = re.findall(r'^.*//\]', r.text, re.MULTILINE)[0]
     htmls = ret.split(';var ')
     for i, h in enumerate(htmls):
-        if 'p1_P_GuoNei_pImages_fileXingCM' in h:
+        if 'p1_P_GuoNei_pImages_HFimgXingCM' in h:
             try:
                 XingCM = _html_to_json(htmls[i - 1])['Text']
             except:
